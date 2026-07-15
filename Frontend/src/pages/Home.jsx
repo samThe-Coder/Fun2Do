@@ -1,19 +1,27 @@
 import { useState } from "react"
 import {v4 as uuidv4 } from 'uuid'
+import TodoForm from '../components/TodoForm'
+import TodoList from '../components/TodoList'
 
 function Home(){
-    const [task,setTask]=useState({
+    const emptyTask = {
         id: "",
         title: "",
         description: "",
         priority: "Medium",
+        dueDate: "",
         isCompleted: false,
         createdAt: null,
-        completedAt: null
-    });
+        completedAt: ""
+    };
+    const [task,setTask]=useState(emptyTask);
     const [taskList,setTaskList]=useState([]);
+
     function handleInput(e){
-        setTask({...task,title : e.target.value});
+        const {name,value} = e.target;
+        setTask(prev =>({...prev,
+            [name] : value
+        }));
     }
     function toggleTaskStatus(e,id){
 
@@ -45,15 +53,7 @@ function Home(){
                 //setTask(newTask); //creates problem due to useState's asynchronous behaviour
                 setTaskList(prev => [...prev,newTask]); //adding the new task to the existing list
                 
-                setTask({
-                    id: "",
-                    title: "",
-                    description: "",
-                    priority: "Medium",
-                    isCompleted: false,
-                    createdAt: null,
-                    completedAt: null
-                }); //resetting the input field
+                setTask(emptyTask); //resetting the input field
                 
             }else{
                 alert("Special characters are not allowed!");
@@ -64,28 +64,21 @@ function Home(){
         const newTaskList = taskList.filter(prev => prev.id !== id);
         setTaskList(newTaskList);
     }
+    function handleTaskUpdate(id){
+        const updatedTask = taskList.map((element) => {
+            if(element.id === id){
+                return {
+                    element
+                }
+            }
+        }
+    )
+    }
     return(
         <>
-            <input type="text" value={task.title} onChange={(e)=>handleInput(e)}/>
-            <button onClick={addTask}>Add</button>
-
-            <ul>
-                {
-                    taskList.map((element)=> 
-                        <li key={element.id}>
-                            <div>
-                                <h2>
-                                    Task : {element.title}
-                                </h2>
-                                <h3>
-
-                                    Status : <input type="checkbox"  onChange={(e)=>toggleTaskStatus(e,element.id)}/>{element.isCompleted ? 'Completed' : 'Pending'}
-                                </h3>
-                                <button onClick={()=>handleTaskDeletion(element.id)}>Delete</button>
-                            </div>
-                        </li>
-                    )}
-            </ul>
+            <TodoForm task={task} handleInput={handleInput} addTask={addTask}/>
+            <TodoList taskList={taskList} handleInput={handleInput} toggleTaskStatus={toggleTaskStatus} handleTaskDeletion={handleTaskDeletion} handleTaskUpdate={handleTaskUpdate}/>
+            
         </>
     )
 }

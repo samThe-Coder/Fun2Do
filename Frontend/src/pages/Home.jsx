@@ -15,6 +15,21 @@ function Home(){
     function handleInput(e){
         setTask({...task,title : e.target.value});
     }
+    function toggleTaskStatus(e,id){
+
+        const newTaskList = taskList.map((element) => {
+            if(element.id === id){
+                return {
+                    ...element,
+                    isCompleted : e.target.checked,
+                    completedAt : e.target.checked ? new Date().toISOString() : null
+                }
+            }else
+                return element;
+        } );
+        
+        setTaskList(newTaskList);
+    }
     function addTask(){
         if(task.title.trim() !== "" ){ //allow valid strings only
             const invalidCharacters = /[`'\"<>\\$%(&)]/;
@@ -63,7 +78,8 @@ function Home(){
                                     Task : {element.title}
                                 </h2>
                                 <h3>
-                                    Status : {element.isCompleted ? 'Completed' : 'Pending'}
+
+                                    Status : <input type="checkbox"  onChange={(e)=>toggleTaskStatus(e,element.id)}/>{element.isCompleted ? 'Completed' : 'Pending'}
                                 </h3>
                                 <button onClick={()=>handleTaskDeletion(element.id)}>Delete</button>
                             </div>

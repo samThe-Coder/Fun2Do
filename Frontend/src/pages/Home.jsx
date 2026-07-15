@@ -7,8 +7,8 @@ function Home(){
         setTask({...task,title : e.target.value});
     }
     function addTask(){
-        
         setTaskList(prev => [...prev,task]);
+        setTask({title:""});
     }
     return(
         <>

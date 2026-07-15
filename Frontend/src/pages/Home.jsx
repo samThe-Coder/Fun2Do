@@ -2,27 +2,52 @@ import { useState } from "react"
 import {v4 as uuidv4 } from 'uuid'
 
 function Home(){
-    const [task,setTask]=useState({id:"",title:"",isCompleted:false});
+    const [task,setTask]=useState({
+        id: "",
+        title: "",
+        description: "",
+        priority: "Medium",
+        isCompleted: false,
+        createdAt: null,
+        completedAt: null
+    });
     const [taskList,setTaskList]=useState([]);
     function handleInput(e){
         setTask({...task,title : e.target.value});
     }
     function addTask(){
         if(task.title.trim() !== "" ){ //allow valid strings only
-            if(!task.title.match("[`'\"<>\\$%(&)]")){ //\\W+ restricting special characters
+            const invalidCharacters = /[`'\"<>\\$%(&)]/;
+
+            if(!invalidCharacters.test(task.title)){ //\\W+ restricting special characters
                 //Create a new object with uuid
                 const newTask = {
+                    ...task,
                     id: uuidv4(), //later to use this in database
-                    title:task.title,
-                    isCompleted:task.isCompleted
+                    createdAt: new Date().toISOString()
                 }
+
                 //setTask(newTask); //creates problem due to useState's asynchronous behaviour
                 setTaskList(prev => [...prev,newTask]); //adding the new task to the existing list
-                setTask({id:"",title:"",isCompleted:false}); //resetting the input field
+                
+                setTask({
+                    id: "",
+                    title: "",
+                    description: "",
+                    priority: "Medium",
+                    isCompleted: false,
+                    createdAt: null,
+                    completedAt: null
+                }); //resetting the input field
+                
             }else{
                 alert("Special characters are not allowed!");
             }
         }
+    }
+    function handleTaskDeletion(id){
+        const newTaskList = taskList.filter(prev => prev.id !== id);
+        setTaskList(newTaskList);
     }
     return(
         <>
@@ -33,13 +58,15 @@ function Home(){
                 {
                     taskList.map((element)=> 
                         <li key={element.id}>
-                            
-                            <h2>
-                                Task : {element.title}
-                            </h2>
-                            <h3>
-                                Status : {element.isCompleted ? 'Completed' : 'Pending'}
-                            </h3>
+                            <div>
+                                <h2>
+                                    Task : {element.title}
+                                </h2>
+                                <h3>
+                                    Status : {element.isCompleted ? 'Completed' : 'Pending'}
+                                </h3>
+                                <button onClick={()=>handleTaskDeletion(element.id)}>Delete</button>
+                            </div>
                         </li>
                     )}
             </ul>

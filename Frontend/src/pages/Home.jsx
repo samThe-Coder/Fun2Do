@@ -25,20 +25,36 @@ function Home(){
             [name] : value
         }));
     }
-    function toggleTaskStatus(e,id){
-
-        const newTaskList = taskList.map((element) => {
-            if(element.id === id){
-                return {
-                    ...element,
-                    isCompleted : e.target.checked,
-                    completedAt : e.target.checked ? new Date().toISOString() : null
-                }
-            }else
-                return element;
-        } );
+    function toggleTaskStatus(id){
         
-        setTaskList(newTaskList);
+        setTaskList((prevTasks) =>
+        prevTasks.map((todo) => {
+            if (todo.id !== id) {
+                return todo;
+            }
+
+            const isCompleted = !todo.isCompleted;
+
+            return {
+                ...todo,
+                isCompleted,
+                completedAt: isCompleted ? new Date().toISOString() : null,
+            };
+        })
+    );
+        // const newTaskList = taskList.map((element) => {
+        //     if(element.id === id){
+        //         const isCompleted = !element.isCompleted;
+        //         return {
+        //             ...element,
+        //             isCompleted : isCompleted,
+        //             completedAt : isCompleted? new Date().toISOString() : null
+        //         }
+        //     }else
+        //         return element;
+        // } );
+        
+        // setTaskList(newTaskList);
     }
     function addTask(){
         if(task.title.trim() !== "" ){ //allow valid strings only
@@ -48,7 +64,7 @@ function Home(){
                 //Create a new object with uuid
                 const newTask = {
                     ...task,
-                    id: task.id ? task.id : uuidv4(), //later to use this in database
+                    id: uuidv4(), //later to use this in database
                     createdAt: new Date().toISOString()
                 }
 
@@ -66,19 +82,31 @@ function Home(){
         const newTaskList = taskList.filter(prev => prev.id !== id);
         setTaskList(newTaskList);
     }
-    function handleTaskUpdate(taskObj){
+    function handleTaskUpdate(){
+        setTaskList((prevTaskList) => {
+            return prevTaskList.map((todo)=>{
+                if(todo.id !== task.id){
+                    return todo;
+                }else{
+                    return task;
+                }
+            })
+        })
         // const updatedTask = taskList.map((element) => {
-        //     if(element.id === id){
-        //         return {
-        //             element
-        //         }
+        //     if(element.id !== id){
+        //         return element;
+        //     }else{
+        //         return task; //currently input value
         //     }
-        // }
-        // )
-        console.log(taskObj)
-        setTaskList(prev=> [...prev,taskObj]);
+        // })
+        // setTaskList(updatedTask);
         setTask(emptyTask);
+        setEditTaskId(null);
     
+    }
+    function handleTaskUpdateCancel(){
+        setTask(emptyTask);
+        setEditTaskId(null);
     }
     function handleTaskEdit(taskObj){
         setEditTaskId(taskObj.id);
@@ -86,7 +114,7 @@ function Home(){
     }
     return(
         <>
-            <TodoForm task={task} handleInput={handleInput} addTask={addTask} editTaskId={editTaskId} handleTaskUpdate={handleTaskUpdate}/>
+            <TodoForm task={task} handleInput={handleInput} addTask={addTask} editTaskId={editTaskId} handleTaskUpdate={handleTaskUpdate} handleTaskUpdateCancel={handleTaskUpdateCancel}/>
             <TodoList taskList={taskList} toggleTaskStatus={toggleTaskStatus} handleTaskEdit={handleTaskEdit} handleTaskDeletion={handleTaskDeletion} />
             
         </>

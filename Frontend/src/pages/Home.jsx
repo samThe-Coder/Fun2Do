@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import {v4 as uuidv4 } from 'uuid'
 import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
@@ -14,10 +14,19 @@ function Home(){
         createdAt: null,
         completedAt: ""
     };
+    const STORAGE_KEY = "Fun2Do_tasks";
     const [task,setTask]=useState(emptyTask);
     const [editTaskId,setEditTaskId]=useState(null);
-    const [taskList,setTaskList]=useState([]);
+    //using local storage to persist data locally
+    const [taskList,setTaskList]=useState(() =>{
+        const savedTasks = localStorage.getItem(STORAGE_KEY);
+        return savedTasks ? JSON.parse(savedTasks) : []
+    });
     
+    useEffect(()=>{
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(taskList));
+    },[taskList]);
+
 
     function handleInput(e){
         const {name,value} = e.target;

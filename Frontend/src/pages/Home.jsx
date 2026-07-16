@@ -15,7 +15,9 @@ function Home(){
         completedAt: ""
     };
     const [task,setTask]=useState(emptyTask);
+    const [editTaskId,setEditTaskId]=useState(null);
     const [taskList,setTaskList]=useState([]);
+    
 
     function handleInput(e){
         const {name,value} = e.target;
@@ -46,7 +48,7 @@ function Home(){
                 //Create a new object with uuid
                 const newTask = {
                     ...task,
-                    id: uuidv4(), //later to use this in database
+                    id: task.id ? task.id : uuidv4(), //later to use this in database
                     createdAt: new Date().toISOString()
                 }
 
@@ -64,20 +66,28 @@ function Home(){
         const newTaskList = taskList.filter(prev => prev.id !== id);
         setTaskList(newTaskList);
     }
-    function handleTaskUpdate(id){
-        const updatedTask = taskList.map((element) => {
-            if(element.id === id){
-                return {
-                    element
-                }
-            }
-        }
-    )
+    function handleTaskUpdate(taskObj){
+        // const updatedTask = taskList.map((element) => {
+        //     if(element.id === id){
+        //         return {
+        //             element
+        //         }
+        //     }
+        // }
+        // )
+        console.log(taskObj)
+        setTaskList(prev=> [...prev,taskObj]);
+        setTask(emptyTask);
+    
+    }
+    function handleTaskEdit(taskObj){
+        setEditTaskId(taskObj.id);
+        setTask(taskObj);
     }
     return(
         <>
-            <TodoForm task={task} handleInput={handleInput} addTask={addTask}/>
-            <TodoList taskList={taskList} handleInput={handleInput} toggleTaskStatus={toggleTaskStatus} handleTaskDeletion={handleTaskDeletion} handleTaskUpdate={handleTaskUpdate}/>
+            <TodoForm task={task} handleInput={handleInput} addTask={addTask} editTaskId={editTaskId} handleTaskUpdate={handleTaskUpdate}/>
+            <TodoList taskList={taskList} toggleTaskStatus={toggleTaskStatus} handleTaskEdit={handleTaskEdit} handleTaskDeletion={handleTaskDeletion} />
             
         </>
     )

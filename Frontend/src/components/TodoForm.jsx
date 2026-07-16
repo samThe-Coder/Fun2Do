@@ -1,4 +1,4 @@
-function TodoForm({task,handleInput,addTask}){
+function TodoForm({task,handleInput,addTask,editTaskId,handleTaskUpdate}){
     return (
         <>
             <label>Title</label><input type="text" name="title" value={task.title} onChange={(e)=>handleInput(e)} placeholder="Enter Task Title"/>
@@ -9,7 +9,10 @@ function TodoForm({task,handleInput,addTask}){
                 <option value="low">Low</option>
             </select>
             <label>Due Date</label><input type="date" name="dueDate" value={task.dueDate || ""} onChange={(e)=>handleInput(e)}/>
-            <button onClick={addTask}>Add</button>
+            {
+                editTaskId ?  <button onClick={()=>handleTaskUpdate(task)}>Update</button> : <button onClick={addTask}>Add</button> 
+            }
+            
         </>
     )
 }

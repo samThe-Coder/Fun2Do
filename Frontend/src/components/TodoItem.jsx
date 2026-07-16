@@ -1,4 +1,4 @@
-function TodoItem({task, handleInput, toggleTaskStatus, handleTaskDeletion, handleTaskUpdate}){
+function TodoItem({task, toggleTaskStatus,handleTaskEdit, handleTaskDeletion}){
      if(!task){
         return <p>No task data</p>;
     }
@@ -24,7 +24,7 @@ function TodoItem({task, handleInput, toggleTaskStatus, handleTaskDeletion, hand
             </h4>
             <h5>Due Date : <input type="date" name="dueDate" value={task.dueDate} onChange={(e)=>handleInput(e)}/></h5>
             <h5>Completed At : <input type="date" name="completedAt" value={task.completedAt} onChange={(e)=>handleInput(e)}/></h5>
-            <button onClick={()=>handleTaskUpdate(task.id)}>Edit</button>
+            <button onClick={()=>{handleTaskEdit(task)}}>Edit</button>
             <button onClick={()=>handleTaskDeletion(task.id)}>Delete</button>
         </div>
     </>

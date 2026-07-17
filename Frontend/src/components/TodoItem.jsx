@@ -1,7 +1,8 @@
 function TodoItem({task, toggleTaskStatus,handleTaskEdit, handleTaskDeletion}){
-     if(!task){
-        return <p>No task data</p>;
-    }
+    //  if(!task){
+    //     return <p>No task data</p>;
+
+    // }
     return (
     <>
         

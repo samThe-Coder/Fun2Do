@@ -8,7 +8,7 @@ function Home(){
         id: "",
         title: "",
         description: "",
-        priority: "Medium",
+        priority: "medium",
         dueDate: "",
         isCompleted: false,
         createdAt: null,
@@ -88,19 +88,29 @@ function Home(){
         }
     }
     function handleTaskDeletion(id){
-        const newTaskList = taskList.filter(prev => prev.id !== id);
-        setTaskList(newTaskList);
+        setTaskList((prevTaskList) => 
+            prevTaskList.filter((todo) => 
+                todo.id !== id
+            )
+        );
+        // const newTaskList = taskList.filter(prev => prev.id !== id);
+        // setTaskList(newTaskList);
     }
-    function handleTaskUpdate(){
-        setTaskList((prevTaskList) => {
-            return prevTaskList.map((todo)=>{
-                if(todo.id !== task.id){
-                    return todo;
-                }else{
-                    return task;
-                }
-            })
-        })
+    function handleTaskUpdate(){ //updated task. Replace the old one completely
+        setTaskList((prevTaskList) => 
+            prevTaskList.map((todo) => 
+                todo.id !== task.id ? todo : task
+            )   
+        );
+        // setTaskList((prevTaskList) => {
+        //     return prevTaskList.map((todo)=>{
+        //         if(todo.id !== task.id){
+        //             return todo;
+        //         }else{
+        //             return task;
+        //         }
+        //     })
+        // })
         // const updatedTask = taskList.map((element) => {
         //     if(element.id !== id){
         //         return element;
@@ -111,6 +121,7 @@ function Home(){
         // setTaskList(updatedTask);
         setTask(emptyTask);
         setEditTaskId(null);
+        console.log(task);
     
     }
     function handleTaskUpdateCancel(){
@@ -118,8 +129,10 @@ function Home(){
         setEditTaskId(null);
     }
     function handleTaskEdit(taskObj){
+        console.log(taskObj);
         setEditTaskId(taskObj.id);
-        setTask(taskObj);
+        // setTask(taskObj);// may cause accidental object reference issue
+        setTask({...taskObj});
     }
     return(
         <>

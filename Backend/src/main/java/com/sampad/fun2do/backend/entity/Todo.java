@@ -2,14 +2,19 @@ package com.sampad.fun2do.backend.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Transient;
+
+import com.sampad.fun2do.backend.enums.Priority;
 
 @Entity
 @Table(name="todo")
@@ -17,28 +22,43 @@ public class Todo {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID id;
-	@NotNull
+	
 	@Column(nullable=false)
     private String title;
+	
     private String description;
     
-    private String priority;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false)
+    private Priority priority=Priority.MEDIUM;
+    
     private LocalDate dueDate;
+    
+    @Column(columnDefinition = "BIT(1) DEFAULT 0")
     private boolean  isCompleted;
-    @NotNull
+    
     private LocalDateTime createdAt;
+    
     private LocalDateTime completedAt;
     
-    protected Todo() {}
+    @Transient
+    public long getDaysRemaining() {
+        if (dueDate == null) {
+            return 0;
+        }
+        return ChronoUnit.DAYS.between(LocalDate.now(), dueDate);
+    }
+    
+    public Todo() {}
+    
     @PrePersist
     public void prePersist() {
-    	if(id == null) {
+    	if(this.id == null) {
     		this.id = UUID.randomUUID();
     	}
-    	if(createdAt == null) {
+    	if(this.createdAt == null) {
     		this.createdAt = LocalDateTime.now();
     	}
-
     }
 
 	public UUID getId() {
@@ -65,11 +85,11 @@ public class Todo {
 		this.description = description;
 	}
 
-	public String getPriority() {
+	public Priority getPriority() {
 		return priority;
 	}
 
-	public void setPriority(String priority) {
+	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
 
@@ -85,7 +105,7 @@ public class Todo {
 		return isCompleted;
 	}
 
-	public void setCompleted(boolean isCompleted) {
+	public void setIsCompleted(boolean isCompleted) {
 		this.isCompleted = isCompleted;
 	}
 
@@ -104,5 +124,6 @@ public class Todo {
 	public void setCompletedAt(LocalDateTime completedAt) {
 		this.completedAt = completedAt;
 	}
+	
     
 }

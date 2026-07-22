@@ -21,6 +21,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -44,14 +47,14 @@ public class TodoControllerTest {
 
 	@Test
 	void shouldReturnAllTodos() throws Exception{
-		ResponseTodoDTO todo = new ResponseTodoDTO();
+		ResponseTodoDTO todo = new ResponseTodoDTO();	
 		todo.setTitle("Learn AI Tools");
+		Page<ResponseTodoDTO> page = new PageImpl<>(Arrays.asList(todo));
+		when(todoServ.getAllTodos(any(Pageable.class))).thenReturn(page);
 		
-		when(todoServ.getAllTodos()).thenReturn(Arrays.asList(todo));
-		
-		mockMvc.perform(get("/api/v1/todo"))
+		mockMvc.perform(get("/api/v1/todos"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$[0].title").value("Learn AI Tools"));
+			.andExpect(jsonPath("$.content[0].title").value("Learn AI Tools"));
 	}
 	
 	@Test
@@ -71,7 +74,7 @@ public class TodoControllerTest {
 		
 		when(todoServ.createTodo(any(CreateTodoDTO.class))).thenReturn(savedTodo);
 		
-		mockMvc.perform(post("/api/v1/todo")
+		mockMvc.perform(post("/api/v1/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto))
 				)
@@ -101,7 +104,7 @@ public class TodoControllerTest {
 		
 //		when(todoServ.createTodo(any(CreateTodoDTO.class))).thenReturn(savedTodo); // Spring validations runs before the controller method calls the service
 		
-		mockMvc.perform(post("/api/v1/todo")
+		mockMvc.perform(post("/api/v1/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto)))
 				.andExpect(status().isBadRequest());
@@ -115,7 +118,7 @@ public class TodoControllerTest {
 		request.put("priority", "URGENT");   // invalid enum
 		request.put("dueDate", "2026-07-21");
 		
-		mockMvc.perform(post("/api/v1/todo")
+		mockMvc.perform(post("/api/v1/todos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))
 				).andExpect(status().isBadRequest());

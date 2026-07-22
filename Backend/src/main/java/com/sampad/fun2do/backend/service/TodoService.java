@@ -1,12 +1,14 @@
 package com.sampad.fun2do.backend.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
@@ -55,12 +57,22 @@ public class TodoService {
 		return mapToResponseDTO(todo);
 	}
 	
-	public List<ResponseTodoDTO> getAllTodos(){
-		List<ResponseTodoDTO> todos = todoRepo.findByUser_Id(getCurrentLoggedInUserId())
-	            .stream()
-	            .map(this::mapToResponseDTO)
-	            .collect(Collectors.toList());
-		logger.debug("Retrieved {} todos.",todos.size());
+	public Page<ResponseTodoDTO> getAllTodos(Pageable pageable){
+		
+		logger.debug("Pageable: {}",pageable);
+		logger.debug("Sort: {}",pageable.getSort());
+		if(pageable.getSort().isUnsorted()) {
+			pageable = PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),Sort.by(Sort.Direction.DESC,"createdAt"));
+		}
+		
+		int pageSize = Math.min(pageable.getPageSize(), 100);
+		Pageable safePageable = PageRequest.of(pageable.getPageNumber(),pageSize,pageable.getSort());
+		
+		Page<ResponseTodoDTO> todos = todoRepo.findByUser_Id(getCurrentLoggedInUserId(),safePageable)
+//	            .stream()
+	            .map(this::mapToResponseDTO);
+//	            .collect(Collectors.toList());
+		logger.debug("Retrieved {} todos.",todos.getTotalElements());
 		return todos;
 	} 
 	

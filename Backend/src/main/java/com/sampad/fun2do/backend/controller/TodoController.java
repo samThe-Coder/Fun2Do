@@ -1,10 +1,13 @@
 package com.sampad.fun2do.backend.controller;
 
-import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,8 +38,8 @@ public class TodoController {
 		return ResponseEntity.ok(todoServ.getTodoById(id));
 	}
 	@GetMapping
-	public ResponseEntity<List<ResponseTodoDTO>> getAllTodos() {
-		return ResponseEntity.ok(todoServ.getAllTodos());
+	public ResponseEntity<Page<ResponseTodoDTO>> getAllTodos( @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(todoServ.getAllTodos(pageable));
 	}
 	@PostMapping
 	public ResponseEntity<ResponseTodoDTO> createTodo(@Valid @RequestBody  CreateTodoDTO dto) {

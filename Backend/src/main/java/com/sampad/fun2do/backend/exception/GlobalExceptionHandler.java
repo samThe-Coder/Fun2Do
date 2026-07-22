@@ -23,6 +23,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.sampad.fun2do.backend.exception.todo.TodoNotFoundException;
+import com.sampad.fun2do.backend.exception.user.InvalidCredentialsException;
+import com.sampad.fun2do.backend.exception.user.UserAlreadyExistsException;
+import com.sampad.fun2do.backend.exception.user.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,11 +54,32 @@ public class GlobalExceptionHandler {
 	    return null;
 	}
 	
-	//Handle when record not found in database
+	//Handle when todo record not found in database
 	@ExceptionHandler(TodoNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleTodoNotFound(TodoNotFoundException ex, HttpServletRequest request){
 		logger.warn("Todo not found: {}", ex.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request));
+	}
+	
+	//Handle when user record is not found in database
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
+		logger.warn("User not found: {}",ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request));
+	}
+	
+	// Handle attempts to register an existing username
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex, HttpServletRequest request){
+		logger.warn("User already exists: {}",ex.getMessage());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request));
+	}
+	
+	//Handle when the user credentials are wrong
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex,HttpServletRequest request){
+		logger.warn("Authentication failed: {}",ex.getMessage());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(buildErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), request));
 	}
 	
 	//Handle when invalid data is passed in request body

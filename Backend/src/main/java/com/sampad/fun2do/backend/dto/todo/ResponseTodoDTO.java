@@ -1,4 +1,4 @@
-package com.sampad.fun2do.backend.dto;
+package com.sampad.fun2do.backend.dto.todo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

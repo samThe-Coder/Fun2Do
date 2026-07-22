@@ -1,24 +1,26 @@
-package com.sampad.fun2do.backend.dto;
+package com.sampad.fun2do.backend.dto.todo;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import com.sampad.fun2do.backend.enums.Priority;
 
-public class CreateTodoDTO {
-	@NotNull(message = "Title is required")
-	@NotBlank(message = "Title can not be blank!")
+public class UpdateTodoDTO {
     private String title;
     private String description;
-    @NotNull(message = "Priority is required. Accepted values are [LOW,MEDIUM,HIGH]")
     private Priority priority;
-
     private LocalDate dueDate;
+    private Boolean isCompleted;
+//    private LocalDateTime completedAt;
     
-    public CreateTodoDTO() {}
+    public UpdateTodoDTO() {}
     
+//	public UUID getId() {
+//		return id;
+//	}
+//
+//	public void setId(UUID id) {
+//		this.id = id;
+//	}
 	public String getTitle() {
 		return title;
 	}
@@ -43,6 +45,18 @@ public class CreateTodoDTO {
 	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
-    
-    
+	public Boolean isCompleted() {
+		return isCompleted;
+	}
+	public void setIsCompleted(boolean isCompleted) {
+		this.isCompleted = isCompleted;
+	}
+
+//	public LocalDateTime getCompletedAt() {
+//		return completedAt;
+//	}
+//
+//	public void setCompletedAt(LocalDateTime completedAt) {
+//		this.completedAt = completedAt;
+//	}
 }

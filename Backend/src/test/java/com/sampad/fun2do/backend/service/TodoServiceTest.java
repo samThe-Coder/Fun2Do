@@ -18,8 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.sampad.fun2do.backend.dto.CreateTodoDTO;
-import com.sampad.fun2do.backend.dto.ResponseTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.ResponseTodoDTO;
 import com.sampad.fun2do.backend.entity.Todo;
 import com.sampad.fun2do.backend.enums.Priority;
 import com.sampad.fun2do.backend.repository.TodoRepository;

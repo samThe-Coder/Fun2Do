@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,7 +19,7 @@ import javax.persistence.Transient;
 import com.sampad.fun2do.backend.enums.Priority;
 
 @Entity
-@Table(name="todo")
+@Table(name="todos")
 public class Todo {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
@@ -41,6 +43,9 @@ public class Todo {
     
     private LocalDateTime completedAt;
     
+    @ManyToOne
+    @JoinColumn(name="uid", referencedColumnName = "id")
+    private User user;
     @Transient
     public long getDaysRemaining() {
         if (dueDate == null) {

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sampad.fun2do.backend.dto.CreateTodoDTO;
-import com.sampad.fun2do.backend.dto.ResponseTodoDTO;
-import com.sampad.fun2do.backend.dto.UpdateTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.ResponseTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.UpdateTodoDTO;
 import com.sampad.fun2do.backend.service.TodoService;
 
 @RestController

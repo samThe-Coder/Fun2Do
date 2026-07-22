@@ -25,8 +25,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sampad.fun2do.backend.dto.CreateTodoDTO;
-import com.sampad.fun2do.backend.dto.ResponseTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
+import com.sampad.fun2do.backend.dto.todo.ResponseTodoDTO;
 import com.sampad.fun2do.backend.enums.Priority;
 import com.sampad.fun2do.backend.service.TodoService;
 

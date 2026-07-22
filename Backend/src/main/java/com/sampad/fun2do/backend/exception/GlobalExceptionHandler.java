@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -142,6 +143,14 @@ public class GlobalExceptionHandler {
 	    String message = "Method " + ex.getMethod() + " is not supported. Supported methods are " + ex.getSupportedHttpMethods();
 		logger.warn("Method not allowed: {}", ex.getMethod());
 	    return ResponseEntity .status(HttpStatus.METHOD_NOT_ALLOWED).body(buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED,message,request));
+	}
+	
+	//Handle when media type are not sent with the request
+	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+	public ResponseEntity<ErrorResponse> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpServletRequest request){
+		String message = "Media Type not supported. Supported Media Types are " + ex.getSupportedMediaTypes();
+		logger.warn("Media type not supported {} ", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(buildErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, message, request));
 	}
 	
 	//Handle unexpected parameter values or types 

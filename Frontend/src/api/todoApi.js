@@ -2,10 +2,13 @@ import API from "./api";
 
 function getAuthHeaders(){
     const token = localStorage.getItem("token");
-    return {
+    const headers = {
         "Content-Type" : "application/json",
-        Authorization : `Bearer ${token}`,
     }
+    if(token){
+        headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
 }
 export async function getTodos(page=0,size=10,sort="createdAt,desc"){
     
@@ -57,8 +60,8 @@ export async function createTodo(todo){
     return await response.json();
 }
 
-export async function updateTodo(todo){
-    const repsonse = await fetch(
+export async function updateTodo(id,todo){
+    const response = await fetch(
         `${API}/todos/${id}`
         ,{
             method : "PATCH"
@@ -67,7 +70,7 @@ export async function updateTodo(todo){
         }
     );
 
-    if(!repsonse.ok){
+    if(!response.ok){
         const error = await response.json();
         throw new Error(error.message || "Failed to update todo");
         
@@ -89,5 +92,5 @@ export async function deleteTodo(id){
         throw new Error(error.message || "Failed to delete todo!")
     }
 
-    return await response.json();
+    return true;
 }

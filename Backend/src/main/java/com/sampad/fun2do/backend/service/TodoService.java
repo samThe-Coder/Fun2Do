@@ -13,8 +13,11 @@ import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
 import com.sampad.fun2do.backend.dto.todo.ResponseTodoDTO;
 import com.sampad.fun2do.backend.dto.todo.UpdateTodoDTO;
 import com.sampad.fun2do.backend.entity.Todo;
+import com.sampad.fun2do.backend.entity.User;
 import com.sampad.fun2do.backend.exception.todo.TodoNotFoundException;
 import com.sampad.fun2do.backend.repository.TodoRepository;
+import com.sampad.fun2do.backend.security.SecurityUtils;
+import com.sampad.fun2do.backend.security.UserPrincipal;
 
 @Service
 public class TodoService {
@@ -24,6 +27,12 @@ public class TodoService {
 	public TodoService(TodoRepository todoRepo) {
 		this.todoRepo = todoRepo;
 	}
+	
+	private UUID getCurrentLoggedInUserId() {
+		UserPrincipal principal = SecurityUtils.getCurrentUser();
+		return principal.getId();
+	}
+	
 	private ResponseTodoDTO mapToResponseDTO(Todo todo) {
 	    ResponseTodoDTO dto = new ResponseTodoDTO();
 
@@ -39,8 +48,15 @@ public class TodoService {
 
 	    return dto;
 	}
+	
+	public ResponseTodoDTO getTodoById(UUID id) {
+		Todo todo = this.todoRepo.findByIdAndUser_Id(id,getCurrentLoggedInUserId()).orElseThrow(()-> new TodoNotFoundException("The requested item with id "+id+"  is not found!"));
+		logger.debug("Retrieved todo with id: {} .",todo.getId());
+		return mapToResponseDTO(todo);
+	}
+	
 	public List<ResponseTodoDTO> getAllTodos(){
-		List<ResponseTodoDTO> todos = todoRepo.findAll()
+		List<ResponseTodoDTO> todos = todoRepo.findByUser_Id(getCurrentLoggedInUserId())
 	            .stream()
 	            .map(this::mapToResponseDTO)
 	            .collect(Collectors.toList());
@@ -55,13 +71,17 @@ public class TodoService {
 		todo.setPriority(dto.getPriority());
 		todo.setDueDate(dto.getDueDate());
 		
+		User user = new User();
+		user.setId(getCurrentLoggedInUserId());
+		todo.setUser(user);
+		
 		Todo savedTodo = this.todoRepo.save(todo);
-		logger.info("Todo created: {}",savedTodo.getId());
+		logger.info("Todo created: {} by user: {}",savedTodo.getId(), getCurrentLoggedInUserId());
 		return mapToResponseDTO(savedTodo);
 	}
 	
 	public ResponseTodoDTO updateTodo(UUID id,UpdateTodoDTO dto) {
-		Todo todo = todoRepo.findById(id).orElseThrow(()-> new TodoNotFoundException("The requested item with id "+id+"  is not found!"));
+		Todo todo = todoRepo.findByIdAndUser_Id(id,getCurrentLoggedInUserId()).orElseThrow(()-> new TodoNotFoundException("The requested item with id "+id+"  is not found!"));
 		if(dto.getTitle() != null && !dto.getTitle().trim().isEmpty()) {
 			todo.setTitle(dto.getTitle());
 		}
@@ -85,14 +105,14 @@ public class TodoService {
 		
 		
 		Todo updatedTodo = this.todoRepo.save(todo);
-		logger.info("Todo updated: {}",updatedTodo.getId());
+		logger.info("Todo updated: {} by user: {}",updatedTodo.getId(), getCurrentLoggedInUserId());
 		return this.mapToResponseDTO(updatedTodo);
 	}
 	
 	public void deleteTodo(UUID id) {
-		Todo todoToBeDeleted = todoRepo.findById(id).orElseThrow(()-> new TodoNotFoundException("The requested item with id "+id+"  is not found!"));
+		Todo todoToBeDeleted = todoRepo.findByIdAndUser_Id(id,getCurrentLoggedInUserId()).orElseThrow(()-> new TodoNotFoundException("The requested item with id "+id+"  is not found!"));
 //		todoRepo.deleteById(id);
 		todoRepo.delete(todoToBeDeleted);
-		logger.info("Todo deleted: {}",todoToBeDeleted.getId());
+		logger.info("Todo deleted: {} by user: {}",todoToBeDeleted.getId(), getCurrentLoggedInUserId());
 	}
 }

@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -43,8 +44,8 @@ public class Todo {
     
     private LocalDateTime completedAt;
     
-    @ManyToOne
-    @JoinColumn(name="uid", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="uid", nullable = false, referencedColumnName = "id")
     private User user;
     @Transient
     public long getDaysRemaining() {
@@ -129,6 +130,13 @@ public class Todo {
 	public void setCompletedAt(LocalDateTime completedAt) {
 		this.completedAt = completedAt;
 	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 	
+	public User getUser() {
+		return user;
+	}
     
 }

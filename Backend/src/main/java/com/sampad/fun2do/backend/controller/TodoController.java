@@ -29,6 +29,11 @@ public class TodoController {
 	public TodoController(TodoService todoServ) {
 		this.todoServ=todoServ;
 	}
+	
+	@GetMapping("{id}")
+	public ResponseEntity<ResponseTodoDTO> getTodoById(@PathVariable UUID id){
+		return ResponseEntity.ok(todoServ.getTodoById(id));
+	}
 	@GetMapping
 	public ResponseEntity<List<ResponseTodoDTO>> getAllTodos() {
 		return ResponseEntity.ok(todoServ.getAllTodos());

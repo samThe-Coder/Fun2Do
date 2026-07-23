@@ -2,6 +2,8 @@
     import TodoForm from '../components/TodoForm'
     import TodoList from '../components/TodoList'
     import { getTodos,createTodo,updateTodo,deleteTodo } from "../api/todoApi"
+    import { useNavigate } from "react-router-dom"
+    import { logout } from "../api/authApi"
 
     function Home(){
         const emptyTask = {
@@ -28,6 +30,7 @@
         const [loading, setLoading] = useState(true);
         const [error, setError] = useState("");
 
+        const navigate = useNavigate();
         async function fetchTodos() {
             try{
                 const page = await getTodos();
@@ -180,6 +183,11 @@
             setEditTaskId(taskObj.id);
             // setTask(taskObj);// may cause accidental object reference issue
             setTask({...taskObj});
+        }
+
+        function handleLogOut(){
+            logout();
+            navigate("/login", {replace : true});
         }
         return(
             <>

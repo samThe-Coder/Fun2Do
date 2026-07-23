@@ -1,18 +1,24 @@
 import { useState } from "react";
 import AccessForm from "../components/AccessForm";
 import { logIn,signUp } from "../api/authApi";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Access(){
 
+    const token = localStorage.getItem("token");
+    if(token){
+        return <Navigate to="/" replace />;
+    }
+
     const emptyCredentials = {
-        "username" : "",
-        "password" : ""
+        username : "",
+        password : ""
     };
     const [credentials, setCredentials] = useState(emptyCredentials);
 
     const [error,setError] = useState("");
     const [isLoginMode,setIsLoginMode] = useState(true);
-
+    const navigate = useNavigate();
     function handleInput(e){
         const {name,value} = e.target;
         setCredentials((prev) => ({
@@ -24,24 +30,24 @@ function Access(){
     async function handleSubmit(e){
         setError("");
         e.preventDefault();
-        if(isLoginMode){
-            try{
-                const response = await logIn(credentials);
-
-            }catch(error){
-                setError(error.message);
-            }
-            
-        }else{
-            try{
-                const response = await signUp(credentials);
+        try{
+            let response;
+            if(isLoginMode){
+                response = await logIn(credentials);
+            }else{
+                response = await signUp(credentials);
                 setCredentials(emptyCredentials);
                 setIsLoginMode(true);
-            }catch(error){
-                setError(error.message);
             }
-        }
 
+            if(response.token){
+                localStorage.setItem("token",response.token);
+                navigate("/",{replace : true});
+            }
+        }catch(error){
+            setError(error.message);
+        }
+        
     }
 
     function toggleAccessMode(){

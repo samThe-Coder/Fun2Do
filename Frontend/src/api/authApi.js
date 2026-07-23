@@ -17,9 +17,9 @@ export async function logIn(credentials){
 
     const data = await response.json();
 
-    if(data.token){
-        localStorage.setItem("token",data.token);
-    }
+    // if(data.token){
+    //     localStorage.setItem("token",data.token);
+    // }
     
     return data;
 }
@@ -37,6 +37,15 @@ export async function signUp(userData){
         const error = await response.json();
         throw new Error("Signup failed!");
     }
+    const data = await response.json();
+    // if(data.token){
+    //     localStorage.setItem("token",data.token);
+    // }
+    return data;
+}
 
-    return await response.json();
+export function logout(){
+    localStorage.removeItem("token");
+    window.location.replace("/login");
+    // So that users can't click the back button to visit the protected urls
 }

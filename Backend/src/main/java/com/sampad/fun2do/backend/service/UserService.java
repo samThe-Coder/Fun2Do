@@ -44,7 +44,9 @@ public class UserService {
 		user.setPassword(this.encoder.encode(dto.getPassword()));
 		user.setRole(Role.USER);
 		user = 	this.userRepo.save(user);
-		return mapToUserResponseDTO(user, "User Creation Was Successful!",null);
+		
+		String token = jwtService.generateToken(user.getUserName());
+		return mapToUserResponseDTO(user, "User Creation Was Successful!",token);
 				
 	}
 	

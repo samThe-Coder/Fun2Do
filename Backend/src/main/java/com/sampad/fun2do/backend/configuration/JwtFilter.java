@@ -31,8 +31,15 @@ public class JwtFilter extends OncePerRequestFilter {
 		this.jwtService=jwtService;
 		this.userRepo = userRepo;
 	}
+	
+//	@Override
+//	protected boolean shouldNotFilter(HttpServletRequest request) {
+//	    return "OPTIONS".equalsIgnoreCase(request.getMethod());
+//	}
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		
+		logger.debug("{} {}",request.getMethod(),request.getRequestURI());
 		String header = request.getHeader("Authorization");
 		
 		if(header == null || !header.startsWith("Bearer ")) {

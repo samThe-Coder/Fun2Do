@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#4338CA" />
+    </linearGradient>
+
+    <!-- Card Gradient -->
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F1F5F9" />
+    </linearGradient>
+
+    <!-- Checkmark Gradient -->
+    <linearGradient id="check-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base App Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)" />
+
+  <!-- Clipboard / Task Card Frame -->
+  <rect x="106" y="86" width="300" height="340" rx="48" fill="url(#card-grad)" />
+
+  <!-- Top Clip -->
+  <rect x="196" y="60" width="120" height="52" rx="20" fill="#312E81" />
+
+  <!-- Bold Checkmark Circle -->
+  <circle cx="256" cy="276" r="96" fill="url(#check-grad)" />
+
+  <!-- Thick Checkmark Path (Scales down smoothly) -->
+  <path d="M212 276 L242 306 L302 240" 
+        stroke="#FFFFFF" 
+        stroke-width="24" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none" />
+</svg>

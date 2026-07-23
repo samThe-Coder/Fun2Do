@@ -1,6 +1,7 @@
 function TodoForm({task,handleInput,addTask,editTaskId,handleTaskUpdate,handleTaskUpdateCancel}){
     return (
-        <>
+        <form>
+            
             <label>Title</label><input type="text" name="title" value={task.title} onChange={(e)=>handleInput(e)} placeholder="Enter Task Title"/>
             <label>Description</label><textarea name="description" value={task.description} onChange={(e)=>handleInput(e)} placeholder="Enter Task Description"/>
             <label>Priority</label><select name="priority" value={task.priority} onChange={(e)=>handleInput(e)}>
@@ -18,7 +19,7 @@ function TodoForm({task,handleInput,addTask,editTaskId,handleTaskUpdate,handleTa
                 : <button disabled={!task.title.trim()} onClick={addTask}>Add</button> 
             }
             
-        </>
+        </form>
     )
 }
 export default TodoForm

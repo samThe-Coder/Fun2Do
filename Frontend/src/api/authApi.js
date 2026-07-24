@@ -46,6 +46,7 @@ export async function signUp(userData){
 
 export function logout(){
     localStorage.removeItem("token");
-    window.location.replace("/login");
+    // toast.success("Sucessfully Logged out");
+    // window.location.replace("/login");
     // So that users can't click the back button to visit the protected urls
 }

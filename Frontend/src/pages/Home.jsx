@@ -4,6 +4,7 @@
     import { getTodos,createTodo,updateTodo,deleteTodo } from "../api/todoApi"
     import { useNavigate } from "react-router-dom"
     import { logout } from "../api/authApi"
+    import { toast } from "react-toastify"
 
     function Home(){
         const emptyTask = {
@@ -28,7 +29,7 @@
         //     localStorage.setItem(STORAGE_KEY,JSON.stringify(taskList));
         // },[taskList]);
         const [loading, setLoading] = useState(true);
-        const [error, setError] = useState("");
+        // const [error, setError] = useState("");
 
         const navigate = useNavigate();
         async function fetchTodos() {
@@ -36,7 +37,8 @@
                 const page = await getTodos();
                 setTaskList(page.content);
             }catch(error){
-                setError(error);
+                // setError(error);
+                toast.error(error.message,{ toastId : "todo-fetch-exception"});
             }finally{
                 setLoading(false);
             }
@@ -54,9 +56,10 @@
         }
 
         async function toggleTaskStatus(id){
-            setError("");
+            // setError("");
             const todo = taskList.find(todo => todo.id === id);
             if(!todo){
+                toast.error("Todo not found!",{ toastId : "todo-not-found"});
                 return;
             }
             const update = {
@@ -64,9 +67,11 @@
             }
             try{
                 const updatedTask = await updateTodo(id,update);
+                toast.success(updatedTask.message || "Todo Updated",{ toastId : "todo-update"});
                 setTaskList((prevTaskList)=> prevTaskList.map(task => task.id === id ? updatedTask : task));
             }catch(error){
-                setError(error);
+                // setError(error);
+                toast.error(error.message ,{ toastId : "todo-update-exception"});
             }
         //     setTaskList((prevTasks) =>
         //         prevTasks.map((todo) => {
@@ -98,7 +103,7 @@
             // setTaskList(newTaskList);
         }
         async function addTask(){
-            setError("");
+            // setError("");
             try{
                 if(task.title.trim() !== "" ){ //allow valid strings only
                     const invalidCharacters = /[`'\"<>\\$%(&)]/;
@@ -116,17 +121,20 @@
                         const savedTask = await createTodo(task);
                         setTaskList(prev => [savedTask,...prev]);
                         setTask(emptyTask); //resetting the input field
+                        toast.success(savedTask.message || "Todo Created",{ toastId : "todo-create"});
                         
                     }else{
-                        setError("Special characters are not allowed!");
+                        // setError("Special characters are not allowed!");
+                        toast.warning("Special Characters are not allowed!",{ toastId : "todo-create-warning"});
                     }
                 }
             }catch(error){
-                setError(error);
+                // setError(error);
+                toast.error(error.message ,{ toastId : "todo-create-exception"});
             }
         }
         async function handleTaskDeletion(id){
-            setError("");
+            // setError("");
             try{
                 await deleteTodo(id);
                 setTaskList((prevTaskList) => 
@@ -134,14 +142,16 @@
                         todo.id !== id
                     )
                 );
+                toast.info("Todo Deleted",{ toastId : "todo-delete"});
             }catch(error){
-                setError(error);
+                // setError(error);
+                toast.error(error.message,{ toastId : "todo-delete-exception"});
             }
             // const newTaskList = taskList.filter(prev => prev.id !== id);
             // setTaskList(newTaskList);
         }
         async function handleTaskUpdate(){ //updated task. Replace the old one completely
-            setError("");
+            // setError("");
             try{
                 const updatedTask = await updateTodo(task.id,task)
                 setTaskList((prevTaskList) => 
@@ -149,6 +159,7 @@
                         todo.id !== task.id ? todo : updatedTask
                     )   
                 );
+                toast.success(updatedTask.message || "Todo Updated",{ toastId : "todo-update"});
                 // setTaskList((prevTaskList) => {
                 //     return prevTaskList.map((todo)=>{
                 //         if(todo.id !== task.id){
@@ -170,7 +181,8 @@
                 setEditTaskId(null);
                 // console.log(task);
             }catch(error){
-                setError(error);
+                // setError(error);
+                toast.error(error.message ,{ toastId : "todo-update-exception"});
             }
         
         }
@@ -179,15 +191,17 @@
             setEditTaskId(null);
         }
         function handleTaskEdit(taskObj){
-            console.log(taskObj);
+            // console.log(taskObj);
             setEditTaskId(taskObj.id);
             // setTask(taskObj);// may cause accidental object reference issue
             setTask({...taskObj});
         }
 
         function handleLogOut(){
+            toast.success("Sucessfully Logged out");
             logout();
             navigate("/login", {replace : true});
+            // So that users can't click the back button to visit the protected urls
         }
         return(
             <>

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import API from "./api";
 import { logout } from "./authApi";
 
@@ -15,8 +16,9 @@ function getAuthHeaders(){
 function handleUnauthorized(response){
     //Handles JWT token expiration logic
     if (response.status === 401 || response.status === 403) {
+        toast.error("Session Expired!")
         logout();
-        throw new Error("Session expired. Please log in again.");
+        throw new Error("Unauthorized!");
     }
 }
 export async function getTodos(page=0,size=10,sort="createdAt,desc"){

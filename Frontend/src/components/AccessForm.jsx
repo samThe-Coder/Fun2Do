@@ -19,7 +19,7 @@ function AccessForm({credentials, handleInput, handleSubmit, toggleAccessMode, i
                         <label htmlFor="floatingPassword">Password</label>
                     </div>
                     <div className="form-check form-switch text-start my-3" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-custom-class="custom-tooltip" data-bs-title="This top tooltip is themed via CSS variables.">
-                        <input className="form-check-input" role="switch" checked={isLoginMode} onChange={toggleAccessMode} type="checkbox" value="remember-me" id="checkDefault" />
+                        <input className="form-check-input" role="switch" checked={isLoginMode} onChange={toggleAccessMode} type="checkbox" value={isLoginMode ?  "sign-up?" : "log-in?"} id="checkDefault" />
                         <label className="form-check-label" htmlFor="checkDefault"> {isLoginMode ?  "Sign up?" : "Log in?"} </label>
                     </div>
 

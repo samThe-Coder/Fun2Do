@@ -2,6 +2,7 @@ import { useState } from "react";
 import AccessForm from "../components/AccessForm";
 import { logIn,signUp } from "../api/authApi";
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 function Access(){
 
@@ -16,7 +17,7 @@ function Access(){
     };
     const [credentials, setCredentials] = useState(emptyCredentials);
 
-    const [error,setError] = useState("");
+    // const [error,setError] = useState("");
     const [isLoginMode,setIsLoginMode] = useState(true);
     const navigate = useNavigate();
     function handleInput(e){
@@ -28,7 +29,7 @@ function Access(){
     }
 
     async function handleSubmit(e){
-        setError("");
+        // setError("");
         e.preventDefault();
         try{
             let response;
@@ -42,15 +43,20 @@ function Access(){
 
             if(response.token){
                 localStorage.setItem("token",response.token);
+                toast.success(response.message,{ toastId : `${isLoginMode ? 'login' : 'signup'}-success` });
                 navigate("/",{replace : true});
+            }else{
+                toast.warning(response.message,{ toastId : `${isLoginMode ? 'login' : 'signup'}-warning` });
             }
+            
         }catch(error){
-            setError(error.message);
+            toast.error(error.message,{ toastId : `${isLoginMode ? 'login' : 'signup'}-exception` });
         }
         
     }
 
     function toggleAccessMode(){
+            toast.info(`Switched to ${isLoginMode? 'Sign up' : 'Log in'} Mode`,{ toastId : `${isLoginMode ? 'login' : 'signup'}-switching` });
             setIsLoginMode((prev) => !prev);
     }
 

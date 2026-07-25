@@ -36,7 +36,7 @@ public class UserService {
 	}
 	public UserResponseDTO signUp(RegisterUserDTO dto) {
 		if(this.userRepo.findByUserName(dto.getUserName()).isPresent()) {
-			throw new UserAlreadyExistsException("User Already Exists!");
+			throw new UserAlreadyExistsException("User Already Exists! Kindly Login.");
 		}
 		
 		User user = new User();
@@ -51,7 +51,7 @@ public class UserService {
 	}
 	
 	public UserResponseDTO logIn(LoginUserDTO dto) {
-		User existingUser = userRepo.findByUserName(dto.getUserName()).orElseThrow(()->new UserNotFoundException("User Not Found!"));
+		User existingUser = userRepo.findByUserName(dto.getUserName()).orElseThrow(()->new UserNotFoundException("User Not Found! Kindly Signup!"));
 		
 		if(!this.encoder.matches(dto.getPassword(),existingUser.getPassword())) {
 			throw new InvalidCredentialsException("The Credentials Does Not Match!");

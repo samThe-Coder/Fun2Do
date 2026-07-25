@@ -51,14 +51,14 @@ public class UserService {
 	}
 	
 	public UserResponseDTO logIn(LoginUserDTO dto) {
-		User existingUser = userRepo.findByUserName(dto.getUserName()).orElseThrow(()->new UserNotFoundException("User Not Found"));
+		User existingUser = userRepo.findByUserName(dto.getUserName()).orElseThrow(()->new UserNotFoundException("User Not Found!"));
 		
 		if(!this.encoder.matches(dto.getPassword(),existingUser.getPassword())) {
 			throw new InvalidCredentialsException("The Credentials Does Not Match!");
 		}
 		
 		String token = jwtService.generateToken(existingUser.getUserName());
-		return mapToUserResponseDTO(existingUser, "Login Successful", token);
+		return mapToUserResponseDTO(existingUser, "Login Successful.", token);
 	}
 	
 	

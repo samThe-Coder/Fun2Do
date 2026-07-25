@@ -12,7 +12,7 @@ export async function logIn(credentials){
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(error.message || "Login failed!");
+        throw new Error(`${error.message}`); //Login failed! 
     }
 
     const data = await response.json();
@@ -35,7 +35,7 @@ export async function signUp(userData){
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error("Signup failed!");
+        throw new Error(`${error.message}`); //Signup failed! 
     }
     const data = await response.json();
     // if(data.token){

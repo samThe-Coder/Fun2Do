@@ -16,8 +16,10 @@ function getAuthHeaders(){
 function handleUnauthorized(response){
     //Handles JWT token expiration logic
     if (response.status === 401 || response.status === 403) {
-        toast.error("Session Expired!")
+        toast.error("Session Expired!",{toastId : "session-expired"})
         logout();
+        window.location.replace("/login");
+        // So that users can't click the back button to visit the protected urls
         throw new Error("Unauthorized!");
     }
 }

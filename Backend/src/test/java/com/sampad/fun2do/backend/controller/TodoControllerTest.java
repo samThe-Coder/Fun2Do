@@ -50,7 +50,7 @@ public class TodoControllerTest {
 		ResponseTodoDTO todo = new ResponseTodoDTO();	
 		todo.setTitle("Learn AI Tools");
 		Page<ResponseTodoDTO> page = new PageImpl<>(Arrays.asList(todo));
-		when(todoServ.getAllTodos(any(Pageable.class))).thenReturn(page);
+		when(todoServ.getAllTodos(any(Priority.class),any(Boolean.class),any(String.class),any(Pageable.class))).thenReturn(page);
 		
 		mockMvc.perform(get("/api/v1/todos"))
 			.andExpect(status().isOk())

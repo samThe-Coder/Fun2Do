@@ -23,10 +23,24 @@ function handleUnauthorized(response){
         throw new Error("Unauthorized!");
     }
 }
-export async function getTodos(page=0,size=10,sort="createdAt,desc"){
-    
+export async function getTodos({page=0,size=5,sort="createdAt,desc",priority,status,search}={}){
+    const params = new URLSearchParams({
+        page,
+        size,
+        sort
+    });
+    if(priority){
+        params.append("priority",priority);
+    }
+    if(status){
+        params.append("isCompleted",status);
+    }
+    if(search){
+        params.append("keyword",search);
+    }
+    console.log(params.toString());
     const response = await fetch(
-        `${API}/todos?page=${page}&size=${size}&sort=${sort}`
+        `${API}/todos?${params.toString()}` // ${page}&size=${size}&sort=${sort}
         ,{
             headers :getAuthHeaders()
         }

@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -54,15 +55,20 @@ class TodoServiceTest {
 	
 	@Test
 	void shouldReturnAllTodos() {
+//		Specification<Todo> specification = Specification.where(
+//					TodoSpecification.belongsToUser(userId)
+//				).and(TodoSpecification.hasPriority(null))
+//				.and(TodoSpecification.isCompleted(null))
+//				.and(TodoSpecification.containsKeyword("AI"));
 		Todo todo = new Todo();
 		todo.setTitle("Learn AI Tools");
 		Page<Todo> page = new PageImpl<>(Arrays.asList(todo));
 		when(todoRepo.findByUser_Id(eq(userId),any(Pageable.class))).thenReturn(page);
 		
-		Page<ResponseTodoDTO> result = todoServ.getAllTodos(PageRequest.of(0, 10));
+		Page<ResponseTodoDTO> result = todoServ.getAllTodos(Priority.MEDIUM,true,"AI", PageRequest.of(0, 10));
 		assertEquals(1,result.getTotalElements());
 		assertEquals("Learn AI Tools",result.getContent().get(0).getTitle());
-		verify(todoRepo,times(1)).findByUser_Id(eq(userId),any(Pageable.class));
+		verify(todoRepo,times(1)).findAll(any(Specification.class),any(Pageable.class));
 	}
 	
 	@Test

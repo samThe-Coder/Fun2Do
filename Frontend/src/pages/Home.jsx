@@ -7,6 +7,7 @@ import { logout } from "../api/authApi"
 import { toast } from "react-toastify"
 import Navbar from "../components/Navbar"
 import TertiaryButton from "../components/button/TertiaryButton"
+import Pagination from "../components/Pagination"
 
 
 function Home(){
@@ -36,11 +37,31 @@ function Home(){
 
     const [showModal,setShowModal] = useState(false);
 
+    const[page,setPage] = useState(0);
+    const[size,setSize] = useState(5);
+    const[totalPages,setTotalPages] = useState(0);
+
+    const[status,setStatus] = useState(false);
+    const[search,setSearch] = useState("");
+    const[priority,setPriority] = useState("");
+    const[sortBy,setSortBy] = useState("createdAt,desc");
+
     const navigate = useNavigate();
-    async function fetchTodos() {
+    async function fetchTodos(pageNo = 0) {
         try{
-            const page = await getTodos();
-            setTaskList(page.content);
+            const response = await getTodos(
+                {    
+                    page : pageNo
+                    ,size : size
+                    ,sort : sortBy
+                    ,priority : priority
+                    ,status : status
+                    ,search : search
+                });
+            setTaskList(response.content);
+            // setPage(response.number);
+            setTotalPages(response.totalPages);
+            setSize(response.size);
         }catch(error){
             // setError(error);
             toast.error(error.message,{ toastId : "todo-fetch-exception"});
@@ -50,7 +71,11 @@ function Home(){
     }
 
     useEffect(()=>{
-        fetchTodos();
+        // console.log("Current page:", page);
+        fetchTodos(page);
+    },[page, priority, status, search]);
+
+    useEffect(()=>{
         //get the unsaved/drafted todo back to the modal
         const draft = localStorage.getItem("todoDraft");
         if(draft){
@@ -139,9 +164,10 @@ function Home(){
                     // //setTask(newTask); //creates problem due to useState's asynchronous behaviour
                     // setTaskList(prev => [...prev,newTask]); //adding the new task to the existing list
                     const savedTask = await createTodo(task);
-                    setTaskList(prev => [savedTask,...prev]);
+                    // setTaskList(prev => [savedTask,...prev]);
                     setTask(emptyTask); //resetting the input field
                     toast.success(savedTask.message || "Todo Created",{ toastId : "todo-create"});
+                    await fetchTodos(page);
                     
                 }else{
                     // setError("Special characters are not allowed!");
@@ -160,13 +186,14 @@ function Home(){
         // setError("");
         try{
             await deleteTodo(id);
-            setTaskList((prevTaskList) => 
-                prevTaskList.filter((todo) => 
-                    todo.id !== id
-                )
-            );
+            // setTaskList((prevTaskList) => 
+            //     prevTaskList.filter((todo) => 
+            //         todo.id !== id
+            //     )
+            // );
             toast.info("Todo Deleted",{ toastId : "todo-delete"});
             // setEditTaskId(null);
+            await fetchTodos(page);
             
         }catch(error){
             // setError(error);
@@ -183,12 +210,13 @@ function Home(){
         // setError("");
         try{
             const updatedTask = await updateTodo(task.id,task)
-            setTaskList((prevTaskList) => 
-                prevTaskList.map((todo) => 
-                    todo.id !== task.id ? todo : updatedTask
-                )   
-            );
+            // setTaskList((prevTaskList) => 
+            //     prevTaskList.map((todo) => 
+            //         todo.id !== task.id ? todo : updatedTask
+            //     )   
+            // );
             toast.success(updatedTask.message || "Todo Updated",{ toastId : "todo-update"});
+            await fetchTodos(page);
             // setTaskList((prevTaskList) => {
             //     return prevTaskList.map((todo)=>{
             //         if(todo.id !== task.id){
@@ -245,7 +273,7 @@ function Home(){
     return(
         <>
             <Navbar/>
-            <TodoList taskList={taskList} toggleTaskStatus={toggleTaskStatus} handleTaskEdit={handleTaskEdit} handleTaskDeletion={handleTaskDeletion} />
+            <TodoList taskList={taskList} toggleTaskStatus={toggleTaskStatus} handleTaskEdit={handleTaskEdit} handleTaskDeletion={handleTaskDeletion} page={page} setPage = {setPage} totalPages = {totalPages}/>
             <TodoModal showModal={showModal} setShowModal={setShowModal} task={task} handleInput={handleInput} addTask={addTask} editTaskId={editTaskId} handleTaskUpdate={handleTaskUpdate} handleTaskUpdateCancel={handleTaskUpdateCancel}/>
             <TertiaryButton handleFloatingPlusButton={handleFloatingPlusButton}/>
         </>

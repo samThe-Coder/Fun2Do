@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
 import com.sampad.fun2do.backend.dto.todo.ResponseTodoDTO;
 import com.sampad.fun2do.backend.dto.todo.UpdateTodoDTO;
+import com.sampad.fun2do.backend.enums.Priority;
 import com.sampad.fun2do.backend.service.TodoService;
 
 @RestController
@@ -38,8 +40,12 @@ public class TodoController {
 		return ResponseEntity.ok(todoServ.getTodoById(id));
 	}
 	@GetMapping
-	public ResponseEntity<Page<ResponseTodoDTO>> getAllTodos( @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		return ResponseEntity.ok(todoServ.getAllTodos(pageable));
+	public ResponseEntity<Page<ResponseTodoDTO>> getAllTodos(
+			@RequestParam(required=false) Priority priority, 
+			@RequestParam(required=false) Boolean isCompleted, 
+			@RequestParam(required=false) String keyword,
+			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(todoServ.getAllTodos(priority,isCompleted,keyword,pageable));
 	}
 	@PostMapping
 	public ResponseEntity<ResponseTodoDTO> createTodo(@Valid @RequestBody  CreateTodoDTO dto) {

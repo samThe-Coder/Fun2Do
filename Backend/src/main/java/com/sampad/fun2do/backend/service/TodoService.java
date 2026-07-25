@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.sampad.fun2do.backend.dto.todo.CreateTodoDTO;
@@ -16,10 +17,12 @@ import com.sampad.fun2do.backend.dto.todo.ResponseTodoDTO;
 import com.sampad.fun2do.backend.dto.todo.UpdateTodoDTO;
 import com.sampad.fun2do.backend.entity.Todo;
 import com.sampad.fun2do.backend.entity.User;
+import com.sampad.fun2do.backend.enums.Priority;
 import com.sampad.fun2do.backend.exception.todo.TodoNotFoundException;
 import com.sampad.fun2do.backend.repository.TodoRepository;
 import com.sampad.fun2do.backend.security.SecurityUtils;
 import com.sampad.fun2do.backend.security.UserPrincipal;
+import com.sampad.fun2do.backend.specification.TodoSpecification;
 
 @Service
 public class TodoService {
@@ -57,8 +60,13 @@ public class TodoService {
 		return mapToResponseDTO(todo);
 	}
 	
-	public Page<ResponseTodoDTO> getAllTodos(Pageable pageable){
-		
+	public Page<ResponseTodoDTO> getAllTodos(Priority priority, Boolean isCompleted, String keyword, Pageable pageable){
+		Specification <Todo> specification = Specification.where(
+					TodoSpecification.belongsToUser(getCurrentLoggedInUserId())
+					).and(TodoSpecification.hasPriority(priority))
+					.and(TodoSpecification.isCompleted(isCompleted))
+					.and(TodoSpecification.containsKeyword(keyword));
+				
 		logger.debug("Pageable: {}",pageable);
 		logger.debug("Sort: {}",pageable.getSort());
 		if(pageable.getSort().isUnsorted()) {
@@ -68,7 +76,7 @@ public class TodoService {
 		int pageSize = Math.min(pageable.getPageSize(), 100);
 		Pageable safePageable = PageRequest.of(pageable.getPageNumber(),pageSize,pageable.getSort());
 		
-		Page<ResponseTodoDTO> todos = todoRepo.findByUser_Id(getCurrentLoggedInUserId(),safePageable)
+		Page<ResponseTodoDTO> todos = todoRepo.findAll(specification,safePageable)
 //	            .stream()
 	            .map(this::mapToResponseDTO);
 //	            .collect(Collectors.toList());

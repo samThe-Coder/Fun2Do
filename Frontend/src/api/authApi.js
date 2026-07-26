@@ -12,7 +12,9 @@ export async function logIn(credentials){
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(`${error.message}`); //Login failed! 
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}`); //Login failed! 
     }
 
     const data = await response.json();
@@ -35,7 +37,9 @@ export async function signUp(userData){
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(`${error.message}`); //Signup failed! 
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}`); //Signup failed!   
     }
     const data = await response.json();
     // if(data.token){

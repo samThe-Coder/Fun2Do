@@ -50,7 +50,9 @@ export async function getTodos({page=0,size=5,sort="createdAt,desc",priority,sta
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(error.message || "Failed to fetch todos!")
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}` || "Failed to fetch todos!");
     }
 
     return await response.json();
@@ -68,7 +70,9 @@ export async function getTodo(id) {
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(error.message || "Failed to fetch todo!")
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}` ||  "Failed to fetch todo!")
     }
 
     return await response.json();
@@ -88,7 +92,9 @@ export async function createTodo(todo){
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(error.message || "Failed to create todo!")
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}` ||  "Failed to create todo!")
     }
 
     return await response.json();
@@ -108,7 +114,9 @@ export async function updateTodo(id,todo){
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(error.message || "Failed to update todo");
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}` ||  "Failed to update todo");
         
     }
     return await response.json();
@@ -127,7 +135,9 @@ export async function deleteTodo(id){
 
     if(!response.ok){
         const error = await response.json();
-        throw new Error(error.message || "Failed to delete todo!")
+        //to handle multiple errors
+        const message = typeof error.message === "string" ? error.message : Object.values(error.message).join(", ");
+        throw new Error(`${message}` ||  "Failed to delete todo!")
     }
 
     return true;

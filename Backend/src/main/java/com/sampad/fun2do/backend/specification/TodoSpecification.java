@@ -50,7 +50,7 @@ public class TodoSpecification {
 			if(keyword == null || "".equals(keyword)) {
 				return cb.conjunction();
 			}
-			String pattern = String.format("{}%s{}","%", keyword,"%");
+			String pattern = "%"+ keyword.toLowerCase()+"%";
 			return cb.or(
 					cb.like(cb.lower(root.get("title")), pattern),
 					cb.like(cb.lower(root.get("description")),pattern)

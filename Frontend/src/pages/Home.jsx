@@ -8,6 +8,7 @@ import { toast } from "react-toastify"
 import Navbar from "../components/Navbar"
 import TertiaryButton from "../components/button/TertiaryButton"
 import Pagination from "../components/Pagination"
+import TodoFilter from "../components/TodoFilter"
 
 
 function Home(){
@@ -43,6 +44,7 @@ function Home(){
 
     const[status,setStatus] = useState(false);
     const[search,setSearch] = useState("");
+    const[debouncedSearch, setDebouncedSearch] = useState("");
     const[priority,setPriority] = useState("");
     const[sortBy,setSortBy] = useState("createdAt,desc");
 
@@ -56,7 +58,7 @@ function Home(){
                     ,sort : sortBy
                     ,priority : priority
                     ,status : status
-                    ,search : search
+                    ,search : debouncedSearch
                 });
             setTaskList(response.content);
             // setPage(response.number);
@@ -71,9 +73,20 @@ function Home(){
     }
 
     useEffect(()=>{
+        const timer = setTimeout(()=>{
+            setDebouncedSearch(search);
+        },500); // wait 500 ms after user stops typing
+        return ()=> clearTimeout(timer);
+    },[search]);
+
+    useEffect(() =>{
+        setPage(0);
+    },[priority, status, debouncedSearch]);
+
+    useEffect(()=>{
         // console.log("Current page:", page);
         fetchTodos(page);
-    },[page, priority, status, search]);
+    },[page, priority, status, debouncedSearch]);
 
     useEffect(()=>{
         //get the unsaved/drafted todo back to the modal
@@ -273,6 +286,7 @@ function Home(){
     return(
         <>
             <Navbar/>
+            <TodoFilter priority={priority} setPriority = {setPriority} status = {status} setStatus = {setStatus} search = {search} setSearch = {setSearch}/>
             <TodoList taskList={taskList} toggleTaskStatus={toggleTaskStatus} handleTaskEdit={handleTaskEdit} handleTaskDeletion={handleTaskDeletion} page={page} setPage = {setPage} totalPages = {totalPages}/>
             <TodoModal showModal={showModal} setShowModal={setShowModal} task={task} handleInput={handleInput} addTask={addTask} editTaskId={editTaskId} handleTaskUpdate={handleTaskUpdate} handleTaskUpdateCancel={handleTaskUpdateCancel}/>
             <TertiaryButton handleFloatingPlusButton={handleFloatingPlusButton}/>

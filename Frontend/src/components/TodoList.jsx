@@ -17,7 +17,7 @@ function TodoList({taskList, toggleTaskStatus, handleTaskEdit, handleTaskDeletio
 
     return (
         <>
-            <Pagination page={page} setPage = {setPage} totalPages = {totalPages}/>
+            {/* <Pagination page={page} setPage = {setPage} totalPages = {totalPages}/> */}
             <div className="container mt-4">
                 <ul className="list-group shadow-sm">
 

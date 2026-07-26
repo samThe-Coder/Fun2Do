@@ -257,7 +257,7 @@ function Home(){
         }
     }
     function handleTaskUpdateCancel(){
-        console.log("cancel clicked");
+        // console.log("cancel clicked");
         setTask(emptyTask);
         setEditTaskId(null);
         // setShowModal(false);

@@ -38,7 +38,7 @@ export async function getTodos({page=0,size=5,sort="createdAt,desc",priority,sta
     if(search){
         params.append("keyword",search);
     }
-    console.log(params.toString());
+    // console.log(params.toString());
     const response = await fetch(
         `${API}/todos?${params.toString()}` // ${page}&size=${size}&sort=${sort}
         ,{

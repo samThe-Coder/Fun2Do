@@ -34,7 +34,7 @@ function TodoFilter({priority, setPriority, status, setStatus, search, setSearch
                         value={status === null ? "" : String(status) }
                         onChange={(e)=> {
                             const value = e.target.value;
-                            console.log(e.target.value);
+                            // console.log(e.target.value);
                             setStatus( value === "" ? null : value === "true");
                             
                         }
